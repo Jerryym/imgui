@@ -2,7 +2,7 @@
 // (demo code)
 
 // Help:
-// - Read FAQ at http://dearimgui.org/faq
+// - Read FAQ at http://dearimgui.com/faq
 // - Newcomers, read 'Programmer guide' in imgui.cpp for notes on how to setup Dear ImGui in your codebase.
 // - Call and read ImGui::ShowDemoWindow() in imgui_demo.cpp. All applications in examples/ are doing that.
 // Read imgui.cpp for more details, documentation and comments.
@@ -409,7 +409,7 @@ void ImGui::ShowDemoWindow(bool* p_open)
         ImGui::BulletText("See the ShowDemoWindow() code in imgui_demo.cpp. <- you are here!");
         ImGui::BulletText("See comments in imgui.cpp.");
         ImGui::BulletText("See example applications in the examples/ folder.");
-        ImGui::BulletText("Read the FAQ at http://www.dearimgui.org/faq/");
+        ImGui::BulletText("Read the FAQ at http://www.dearimgui.com/faq/");
         ImGui::BulletText("Set 'io.ConfigFlags |= NavEnableKeyboard' for keyboard controls.");
         ImGui::BulletText("Set 'io.ConfigFlags |= NavEnableGamepad' for gamepad controls.");
         ImGui::Separator();
@@ -5713,8 +5713,6 @@ static void ShowDemoWindowColumns()
     ImGui::TreePop();
 }
 
-namespace ImGui { extern ImGuiKeyData* GetKeyData(ImGuiKey key); }
-
 static void ShowDemoWindowInputs()
 {
     IMGUI_DEMO_MARKER("Inputs & Focus");
@@ -5749,7 +5747,7 @@ static void ShowDemoWindowInputs()
             struct funcs { static bool IsLegacyNativeDupe(ImGuiKey key) { return key < 512 && ImGui::GetIO().KeyMap[key] != -1; } }; // Hide Native<>ImGuiKey duplicates when both exists in the array
             ImGuiKey start_key = (ImGuiKey)0;
 #endif
-            ImGui::Text("Keys down:");         for (ImGuiKey key = start_key; key < ImGuiKey_NamedKey_END; key = (ImGuiKey)(key + 1)) { if (funcs::IsLegacyNativeDupe(key) || !ImGui::IsKeyDown(key)) continue; ImGui::SameLine(); ImGui::Text((key < ImGuiKey_NamedKey_BEGIN) ? "\"%s\"" : "\"%s\" %d", ImGui::GetKeyName(key), key); ImGui::SameLine(); ImGui::Text("(%.02f)", ImGui::GetKeyData(key)->DownDuration); }
+            ImGui::Text("Keys down:");         for (ImGuiKey key = start_key; key < ImGuiKey_NamedKey_END; key = (ImGuiKey)(key + 1)) { if (funcs::IsLegacyNativeDupe(key) || !ImGui::IsKeyDown(key)) continue; ImGui::SameLine(); ImGui::Text((key < ImGuiKey_NamedKey_BEGIN) ? "\"%s\"" : "\"%s\" %d", ImGui::GetKeyName(key), key); }
             ImGui::Text("Keys mods: %s%s%s%s", io.KeyCtrl ? "CTRL " : "", io.KeyShift ? "SHIFT " : "", io.KeyAlt ? "ALT " : "", io.KeySuper ? "SUPER " : "");
             ImGui::Text("Chars queue:");       for (int i = 0; i < io.InputQueueCharacters.Size; i++) { ImWchar c = io.InputQueueCharacters[i]; ImGui::SameLine();  ImGui::Text("\'%c\' (0x%04X)", (c > ' ' && c <= 255) ? (char)c : '?', c); } // FIXME: We should convert 'c' to UTF-8 here but the functions are not public.
 
