@@ -32,30 +32,62 @@ HOW TO UPDATE?
 
 
 -----------------------------------------------------------------------
- VERSION 1.89.5 WIP (In Progress)
+ VERSION 1.89.6 WIP (In Progress)
 -----------------------------------------------------------------------
 
-Breaking Changes:
+Breaking changes:
+
+- Backends: GLUT: Removed call to ImGui::NewFrame() from ImGui_ImplGLUT_NewFrame().
+  It needs to be called from the main app loop, like with every other backends. (#6337) [@GereonV]
 
 Other changes:
 
+- Tables: Fixed a small miscalculation in TableHeader() leading to an empty tooltip
+  showing when a sorting column has no visible name. (#6342) [@lukaasm]
+- InputText: Avoid setting io.WantTextInputNextFrame during the deactivation frame.
+  (#6341) [@lukaasm]
+- Nav: Fixed navigation within tables/columns where item boundaries goes beyond columns limits,
+  unclipped bounding boxes would interfere with other columns. (#2221) [@zzzyap, @ocornut]
+- Debug Tools: Debug Log: Fixed not parsing 0xXXXXXXXX values for geo-locating on mouse
+  hover hover when the identifier is at the end of the line. (#5855)
+- Backends: Clear bits sets io.BackendFlags on backend Shutdown(). (#6334, #6335] [@GereonV]
+  Potentially this would facilitate switching runtime backend mid-session.
+- Backends: Win32: Added ImGui_ImplWin32_InitForOpenGL() to facilitate combining raw
+  Win32/Winapi with OpenGL. (#3218)
+- Backends: OpenGL3: Restore front and back polygon mode separately when supported
+  by context (Desktop 3.0, 3.1, or 3.2+ with compat bit). (#6333) [@GereonV]
+- Examples: Added native Win32+OpenGL3 example. We don't recommend using this setup but we
+  provide it for completeness. (#3218, #5170, #6086, #2772, #2600, #2359, #2022, #1553) [@learn-more]
+
+
+
+-----------------------------------------------------------------------
+ VERSION 1.89.5 (Released 2023-04-13)
+-----------------------------------------------------------------------
+
+Other changes:
+
+- InputText: Reworked prev/next-word behavior to more closely match Visual Studio
+  text editor. Include '.' as a delimiter and alter varying subtle behavior with how
+  blanks and separators are treated when skipping words. (#6067) [@ajweeks]
 - InputText: Fixed a tricky edge case, ensuring value is always written back on the
   frame where IsItemDeactivated() returns true, in order to allow usage without user
   retaining underlying data. While we don't really want to encourage user not retaining
   underlying data, in the absence of a "late commit" behavior/flag we understand it may
   be desirable to take advantage of this trick. (#4714)
-- InputText: Reworked prev/next-word behavior to more closely match Visual Studio
-  text editor. Include '.' as a delimiter and alter varying subtle behavior with how
-  blanks and separators are treated when skipping words. (#6067) [@ajweeks]
 - Drag, Sliders: Fixed parsing of text input when '+' or '#' format flags are used
   in the format string. (#6259) [@idbrii]
 - Nav: Made Ctrl+Tab/Ctrl+Shift+Tab windowing register ownership to held modifier so
   it doesn't interfere with other code when remapping those actions. (#4828, #3255, #5641)
+- Nav: Made PageUp/PageDown/Home/End navigation also scroll parent windows when
+  necessary to make the target location fully visible (same as e.g. arrow keys).
 - ColorEdit: Fixed shading of S/V triangle in Hue Wheel mode. (#5200, #6254) [@jamesthomasgriffin]
 - TabBar: Tab-bars with ImGuiTabBarFlags_FittingPolicyScroll can be scrolled with
   horizontal mouse-wheel (or Shift + WheelY). (#2702)
-- Rendering: Using adaptative tesselation for: RadioButton, ColorEdit preview circles,
+- Rendering: Using adaptive tessellation for RadioButton, ColorEdit preview circles,
   Windows Close and Collapse Buttons.
+- ButtonBehavior: Fixed an edge case where changing widget type/behavior while active
+  and using same id could lead to an assert. (#6304)
 - Misc: Fixed ImVec2 operator[] violating aliasing rules causing issue with Intel C++
   compiler. (#6272) [@BayesBug]
 - IO: Input queue trickling adjustment for touch screens. (#2702, #4921)
@@ -70,7 +102,7 @@ Other changes:
   - Fixed tapping on TableHeader() on a touch-screen.
 - IO: Added io.AddMouseSourceEvent() and ImGuiMouseSource enum. This is to allow backend to
   specify actual event source between Mouse/TouchScreen/Pen. (#2702, #2334, #2372, #3453, #5693)
-- IO: Fixed support for calling io.AddXXXX functions fron inactive context (wrongly
+- IO: Fixed support for calling io.AddXXXX functions from inactive context (wrongly
   advertised as supported in 1.89.4). (#6199, #6256, #5856) [@cfillion]
 - Backends: OpenGL3: Fixed GL loader crash when GL_VERSION returns NULL. (#6154, #4445, #3530)
 - Backends: OpenGL3: Properly restoring "no shader program bound" if it was the case prior to
@@ -78,12 +110,26 @@ Other changes:
 - Backends: Win32: Added support for io.AddMouseSourceEvent() to discriminate Mouse/TouchScreen/Pen. (#2334, #2702)
 - Backends: SDL2/SDL3: Added support for io.AddMouseSourceEvent() to discriminate Mouse/TouchScreen.
   This is relying on SDL passing SDL_TOUCH_MOUSEID in the event's 'which' field. (#2334, #2702)
+- Backends: SDL2/SDL3: Avoid calling SDL_StartTextInput()/SDL_StopTextInput() as they actually
+  block text input input and don't only pertain to IME. It's unclear exactly what their relation
+  is to other IME function such as SDL_SetTextInputRect(). (#6306, #6071, #1953)
 - Backends: GLFW: Added support on Win32 only for io.AddMouseSourceEvent() to discriminate
   Mouse/TouchScreen/Pen. (#2334, #2702)
 - Backends: GLFW: Fixed key modifiers handling on secondary viewports. (#6248, #6034) [@aiekick]
+- Backends: Android: Added support for io.AddMouseSourceEvent() to discriminate Mouse/TouchScreen/Pen.
+  (#6315) [@PathogenDavid]
+- Backends: OSX: Added support for io.AddMouseSourceEvent() to discriminate Mouse/Pen.
+  (#6314) [@PathogenDavid]
+- Backends: WebGPU: Align buffers. Use WGSL shaders instead of SPIR-V. Add gamma uniform. (#6188) [@eliemichel]
+- Backends: WebGPU: Reorganized to store data in io.BackendRendererUserData like other backends.
+- Examples: Vulkan: Fixed validation errors with newer VulkanSDK by explicitly querying and enabling
+  "VK_KHR_get_physical_device_properties2", "VK_KHR_portability_enumeration", and
+  VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR. (#6109, #6172, #6101)
 - Examples: Windows: Added 'misc/debuggers/imgui.natstepfilter' file to all Visual Studio projects,
   now that VS 2022 17.6 Preview 2 support adding Debug Step Filter spec files into projects.
 - Examples: SDL3: Updated for latest WIP SDL3 branch. (#6243)
+- TestSuite: Added variety of new regression tests and improved/amended existing ones
+  in imgui_test_engine/ repo. [@PathogenDavid, @ocornut]
 
 
 -----------------------------------------------------------------------
